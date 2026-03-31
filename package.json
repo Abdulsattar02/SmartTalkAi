@@ -1,0 +1,28 @@
+{
+  "name": "smarttalk-ai",
+  "version": "1.0.0",
+  "description": "SmartTalk AI - Production-Ready Chatbot with Fixed Backend",
+  "main": "server.cjs",
+  "type": "module",
+  "scripts": {
+    "start": "node server.cjs",
+    "dev": "nodemon server.cjs",
+    "test": "echo \"No tests specified\""
+  },
+  "keywords": [
+    "ai",
+    "chatbot",
+    "openrouter",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
