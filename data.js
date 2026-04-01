@@ -2,7 +2,7 @@
  * SmartTalk AI - Knowledge Datasets (500+ Q/A)
  */
 
-export const knowledgeBase = {
+const knowledgeBase = {
   // World GK
   countries: {
     usa: { capital: 'Washington D.C.', currency: 'USD', language: 'English', continent: 'North America' },
@@ -62,4 +62,6 @@ export const knowledgeBase = {
     // 50+
   ]
 };
+
+export default knowledgeBase;
 
