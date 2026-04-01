@@ -1,6 +1,7 @@
 // api/server.cjs
+
 import fetch from "node-fetch";
-import knowledge from "../data.js"; // adjust path if needed
+import knowledge from "../data.js";
 
 export default async function handler(req, res) {
   try {
@@ -58,11 +59,11 @@ export default async function handler(req, res) {
     }
 
     // ------------------------
-    // 🤖 AI API fallback
+    // 🤖 AI API
     // ------------------------
     if (!reply) {
       if (!process.env.OPENROUTER_API_KEY) {
-        return res.json({ reply: "⚠️ API key missing (.env check karo)" });
+        return res.json({ reply: "⚠️ API key missing" });
       }
 
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -81,18 +82,13 @@ export default async function handler(req, res) {
       });
 
       const data = await response.json();
-      console.log("AI DATA:", data);
-
       reply = data?.choices?.[0]?.message?.content || "⚠️ AI no response";
     }
 
-    // ------------------------
-    // ✅ SEND RESPONSE
-    // ------------------------
     return res.status(200).json({ reply });
 
   } catch (err) {
-    console.error("SERVER ERROR:", err);
-    return res.status(500).json({ reply: "⚠️ AI not working" });
+    console.error("ERROR:", err);
+    return res.status(500).json({ reply: "⚠️ Server error" });
   }
 }
