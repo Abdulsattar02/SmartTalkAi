@@ -1,104 +1,66 @@
-const fetch = require('node-fetch');
-require('dotenv').config();
+// api/server.cjs
+import fetch from "node-fetch";
+import knowledge from "../data.js"; // adjust path if needed
 
-const knowledge = require("./data.js");
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-
-const app = express();
-
-// ------------------------
-// ✅ CORS
-// ------------------------
-app.use(cors());
-app.options("*", cors());
-
-// ------------------------
-// ✅ JSON
-// ------------------------
-app.use(express.json());
-
-// ------------------------
-// ✅ STATIC FILES
-// ------------------------
-app.use(express.static('.'));
-
-// ------------------------
-// ✅ FAVICON
-// ------------------------
-app.get('/favicon.ico', (req, res) => {
-  const faviconPath = path.join(__dirname, 'logo_new.svg');
-  res.sendFile(faviconPath, err => {
-    if (err) res.status(204).end();
-  });
-});
-
-// ------------------------
-// ✅ HEALTH CHECK
-// ------------------------
-app.get("/health", (req, res) => {
-  res.json({ status: "OK" });
-});
-
-// ------------------------
-// ✅ CHAT ROUTE
-// ------------------------
-app.post("/chat", async (req, res) => {
-  const message = (req.body.message || "").toLowerCase();
-  console.log("User:", message);
-
-  let reply = null;
-
-  // ------------------------
-  // 🧠 LOCAL LOGIC
-  // ------------------------
-  if (/hi|hello|salam/.test(message)) {
-    reply = "Hi! 👋 How are you?";
-  } else if (/how are you|kese ho/.test(message)) {
-    reply = "I'm good 😊 What about you?";
-  } else if (/who made you|kisne banaya/.test(message)) {
-    reply = "I was created by Abdul Sattar 👨‍💻";
-  } else if (/abdul sattar/.test(message)) {
-    reply = "He is an IT graduate from Mirpurkhas Pakistan 🇵🇰";
-  } else if (/friends|dost/.test(message)) {
-    reply = "Anas & Afan are his friends 👬";
-  } else if (/^\d+\s*[\+\-\*\/]\s*\d+$/.test(message)) {
-    try {
-      reply = eval(message).toString();
-    } catch {
-      reply = "Calculation error 😅";
+export default async function handler(req, res) {
+  try {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method Not Allowed" });
     }
-  } else if (/capital.*pakistan/.test(message)) {
-    reply = "Islamabad is the capital of Pakistan 🇵🇰";
-  } else if (/who made pakistan/.test(message)) {
-    reply = "Quaid-e-Azam Muhammad Ali Jinnah 🇵🇰";
-  } else if (/national hero/.test(message)) {
-    reply = "Quaid-e-Azam & Allama Iqbal are national heroes 🇵🇰";
-  } else if (/pakistan/.test(message)) {
-    reply = "Pakistan 🇵🇰 is a beautiful country.";
-  }
 
-  // ------------------------
-  // 📚 data.js fallback
-  // ------------------------
-  if (!reply) {
-    outerLoop:
-    for (let category in knowledge) {
-      for (let key in knowledge[category]) {
-        if (message.includes(key.toLowerCase())) {
-          reply = knowledge[category][key];
-          break outerLoop;
+    const message = (req.body.message || "").toLowerCase();
+    console.log("User:", message);
+
+    let reply = null;
+
+    // ------------------------
+    // 🧠 LOCAL LOGIC
+    // ------------------------
+    if (/hi|hello|salam/.test(message)) {
+      reply = "Hi! 👋 How are you?";
+    } else if (/how are you|kese ho/.test(message)) {
+      reply = "I'm good 😊 What about you?";
+    } else if (/who made you|kisne banaya/.test(message)) {
+      reply = "I was created by Abdul Sattar 👨‍💻";
+    } else if (/abdul sattar/.test(message)) {
+      reply = "He is an IT graduate from Mirpurkhas Pakistan 🇵🇰";
+    } else if (/friends|dost/.test(message)) {
+      reply = "Anas & Afan are his friends 👬";
+    } else if (/^\d+\s*[\+\-\*\/]\s*\d+$/.test(message)) {
+      try {
+        reply = eval(message).toString();
+      } catch {
+        reply = "Calculation error 😅";
+      }
+    } else if (/capital.*pakistan/.test(message)) {
+      reply = "Islamabad is the capital of Pakistan 🇵🇰";
+    } else if (/who made pakistan/.test(message)) {
+      reply = "Quaid-e-Azam Muhammad Ali Jinnah 🇵🇰";
+    } else if (/national hero/.test(message)) {
+      reply = "Quaid-e-Azam & Allama Iqbal are national heroes 🇵🇰";
+    } else if (/pakistan/.test(message)) {
+      reply = "Pakistan 🇵🇰 is a beautiful country.";
+    }
+
+    // ------------------------
+    // 📚 data.js fallback
+    // ------------------------
+    if (!reply) {
+      outerLoop:
+      for (let category in knowledge) {
+        for (let key in knowledge[category]) {
+          if (message.includes(key.toLowerCase())) {
+            reply = knowledge[category][key];
+            break outerLoop;
+          }
         }
       }
     }
-  }
 
-  // ------------------------
-  // 🤖 AI API fallback
-  // ------------------------
-  if (!reply) {
-    try {
+    // ------------------------
+    // 🤖 AI API fallback
+    // ------------------------
+    if (!reply) {
       if (!process.env.OPENROUTER_API_KEY) {
         return res.json({ reply: "⚠️ API key missing (.env check karo)" });
       }
@@ -119,28 +81,18 @@ app.post("/chat", async (req, res) => {
       });
 
       const data = await response.json();
-
       console.log("AI DATA:", data);
 
       reply = data?.choices?.[0]?.message?.content || "⚠️ AI no response";
-
-    } catch (err) {
-      console.error("AI ERROR:", err);
-      reply = "⚠️ AI not working";
     }
+
+    // ------------------------
+    // ✅ SEND RESPONSE
+    // ------------------------
+    return res.status(200).json({ reply });
+
+  } catch (err) {
+    console.error("SERVER ERROR:", err);
+    return res.status(500).json({ reply: "⚠️ AI not working" });
   }
-
-  // ------------------------
-  // ✅ SEND RESPONSE
-  // ------------------------
-  res.json({ reply });
-});
-
-// ------------------------
-// ✅ SERVER START
-// ------------------------
-const PORT = process.env.PORT || 3002;
-
-app.listen(PORT, () => {
-  console.log(`🚀 SmartTalk AI running on http://localhost:${PORT}`);
-});
+}

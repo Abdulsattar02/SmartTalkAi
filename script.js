@@ -37,8 +37,11 @@ async function sendMessage() {
   addMessage(message, "user");
   input.value = "";
 
+  // typing indicator
+  const typingDiv = addMessage("Typing...", "bot", true);
+
   try {
-    const res = await fetch("/chat", {
+    const res = await fetch("/api/server", {   // ✅ FIXED ENDPOINT
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -52,6 +55,9 @@ async function sendMessage() {
 
     const data = await res.json();
 
+    // remove typing
+    typingDiv.remove();
+
     if (data.reply) {
       addMessage(data.reply, "bot");
     } else {
@@ -60,6 +66,7 @@ async function sendMessage() {
 
   } catch (err) {
     console.error("ERROR:", err);
+    typingDiv.remove();
     addMessage("⚠️ Server not responding", "bot");
   }
 }
@@ -67,7 +74,7 @@ async function sendMessage() {
 // ------------------------
 // ✅ ADD MESSAGE UI
 // ------------------------
-function addMessage(text, sender) {
+function addMessage(text, sender, isTemp = false) {
   const div = document.createElement("div");
 
   div.className =
@@ -89,4 +96,6 @@ function addMessage(text, sender) {
 
   // auto scroll
   chatBox.scrollTop = chatBox.scrollHeight;
+
+  return isTemp ? div : null; // return for typing indicator
 }
