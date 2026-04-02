@@ -1,3 +1,5 @@
+// script.js
+
 const input = document.getElementById("userInput");
 const button = document.getElementById("sendButton");
 const chatBox = document.getElementById("messagesContainer");
@@ -41,32 +43,27 @@ async function sendMessage() {
   const typingDiv = addMessage("Typing...", "bot", true);
 
   try {
-    const res = await fetch("/api/server", {   // ✅ FIXED ENDPOINT
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message })
-    });
+const res = await fetch("/api/server", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ message })
+});
 
-    if (!res.ok) {
-      throw new Error("Server error");
-    }
+    if (!res.ok) throw new Error("Server error");
 
     const data = await res.json();
 
-    // remove typing
-    typingDiv.remove();
+    // remove typing indicator
+    if (typingDiv) typingDiv.remove();
 
     if (data.reply) {
       addMessage(data.reply, "bot");
     } else {
       addMessage("⚠️ No response from server", "bot");
     }
-
   } catch (err) {
     console.error("ERROR:", err);
-    typingDiv.remove();
+    if (typingDiv) typingDiv.remove();
     addMessage("⚠️ Server not responding", "bot");
   }
 }
@@ -75,19 +72,19 @@ async function sendMessage() {
 // ✅ ADD MESSAGE UI
 // ------------------------
 function addMessage(text, sender, isTemp = false) {
-  const div = document.createElement("div");
+  if (!chatBox) return null;
 
+  const div = document.createElement("div");
   div.className =
     sender === "user"
       ? "flex justify-end my-2"
       : "flex justify-start my-2";
 
   const bubble = document.createElement("div");
-
   bubble.className =
     sender === "user"
-      ? "bg-black text-white px-4 py-2 rounded-2xl max-w-xs"
-      : "bg-gray-300 text-black px-4 py-2 rounded-2xl max-w-xs";
+      ? "bg-black text-white px-4 py-2 rounded-2xl max-w-xs break-words"
+      : "bg-gray-300 text-black px-4 py-2 rounded-2xl max-w-xs break-words";
 
   bubble.innerText = text;
 
@@ -97,5 +94,5 @@ function addMessage(text, sender, isTemp = false) {
   // auto scroll
   chatBox.scrollTop = chatBox.scrollHeight;
 
-  return isTemp ? div : null; // return for typing indicator
+  return isTemp ? div : null; // for typing indicator
 }

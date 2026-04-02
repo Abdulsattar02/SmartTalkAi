@@ -1,25 +1,17 @@
 // api/server.js
+import fetch from "node-fetch";   // Node 18+ me optional, use only if needed
+import knowledge from "../data.js";  // optional local logic
 
-const fetch = require("node-fetch");
-const knowledge = require("../data.js");
-
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
-    if (req.method !== "POST") {
-      return res.status(405).json({ error: "Method Not Allowed" });
-    }
+    if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
     const message = (req.body.message || "").toLowerCase();
-    console.log("User:", message);
-
     let reply = null;
 
     // LOCAL LOGIC
-    if (/hi|hello|salam/.test(message)) {
-      reply = "Hi! 👋 How are you?";
-    } else if (/how are you|kese ho/.test(message)) {
-      reply = "I'm good 😊 What about you?";
-    }
+    if (/hi|hello|salam/.test(message)) reply = "Hi! 👋 How are you?";
+    else if (/how are you|kese ho/.test(message)) reply = "I'm good 😊 What about you?";
 
     // AI CALL
     if (!reply) {
@@ -31,9 +23,7 @@ module.exports = async function handler(req, res) {
         },
         body: JSON.stringify({
           model: "gpt-4o-mini",
-          messages: [
-            { role: "user", content: message }
-          ]
+          messages: [{ role: "user", content: message }]
         })
       });
 
@@ -47,4 +37,4 @@ module.exports = async function handler(req, res) {
     console.error("ERROR:", err);
     return res.status(500).json({ reply: "Server error" });
   }
-};
+}
