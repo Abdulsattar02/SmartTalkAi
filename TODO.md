@@ -1,6 +1,22 @@
-# Fix SmartTalk AI - "AI not responding"
+# Fix Production Errors (Tailwind, Favicon, Server 404)
 
-- [x] Step 1: Fix data.js export (CommonJS)\n- [x] Step 2: Clean script.js duplicates\n- [x] Step 3: Create .env with API key instructions
-- [x] Step 4: Test server with `npm start` (fixed ESM issue)
-- [x] Step 5: Verify chat works (local + API)\n- [x] Step 6: Mark complete
+**Plan Breakdown:**
+- [x] Step 1: Create server.js (Express server from api/server.js logic)
+- [x] Step 2: Create .env.example + instructions
+
+- [ ] Step 3: Update package.json (Tailwind deps, scripts, main)
+- [ ] Step 4: Setup Tailwind (config files, remove CDN)
+- [ ] Step 5: Create favicon.ico
+- [ ] Step 6: Update index.html (Tailwind, favicon)
+- [ ] Step 7: npm install && npm start
+- [ ] Step 8: Test chat works (no errors)
+
+# Premium UI/UX Polish (SmartTalk)
+- [x] Style polish: header glass + better spacing
+- [x] Sidebar polish: cleaner + hover + active indicator + divider
+- [ ] Message polish: bubble width/typography/animations + AI/user distinction
+- [ ] Input polish: focus glow, placeholder, scrollbar cleanup, send button animation
+- [ ] Premium micro-interactions: transitions, reduced motion compatibility
+- [ ] Manual verification in browser
+
 
