@@ -281,7 +281,8 @@ function handleInputChange() {
 
 function autoResizeTextarea() {
   userInput.style.height = "auto";
-  const newHeight = Math.min(userInput.scrollHeight, 120);
+  const scrollHeight = userInput.scrollHeight;
+  const newHeight = Math.max(44, Math.min(scrollHeight, 120));
   userInput.style.height = newHeight + "px";
 }
 

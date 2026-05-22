@@ -438,11 +438,27 @@ body.dark-mode .header {
   height: 24px;
 }
 
+.header-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.header-logo {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+}
+
 .header-title {
   font-size: 1.125rem;
   font-weight: 700;
-  flex: 1;
-  text-align: center;
+  margin: 0;
+  white-space: nowrap;
 }
 
 .header-spacer {
@@ -455,9 +471,18 @@ body.dark-mode .header {
     padding: 0 var(--spacing-xl);
   }
 
+  .header-brand {
+    flex: 0;
+    gap: 10px;
+  }
+
+  .header-logo {
+    width: 36px;
+    height: 36px;
+  }
+
   .header-title {
     text-align: left;
-    flex: 0;
   }
 
   .header-spacer {
@@ -732,40 +757,46 @@ body.dark-mode .typing-indicator {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  padding: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-md) max(var(--spacing-md), env(safe-area-inset-bottom, 0));
   background-color: var(--bg-primary);
   border-top: 1px solid var(--border-light);
   z-index: var(--z-sticky);
-  gap: var(--spacing-xs);
+  gap: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-height: auto;
 }
 
 .input-area {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 6px;
+  min-height: auto;
 }
 
 .input-container {
   display: flex;
-  align-items: flex-end;
-  gap: var(--spacing-sm);
-  background-color: var(--bg-primary);
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  min-height: 44px;
 }
 
 .user-input {
   flex: 1;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 10px 12px;
   border: 1px solid var(--border-light);
   border-radius: 20px;
   background-color: var(--bg-secondary);
   color: var(--text-primary);
   font-family: inherit;
   font-size: 0.9375rem;
-  line-height: 1.5;
+  line-height: 1.4;
 
   /* Disable manual textarea resizing (keep JS auto-resize) */
   resize: none;
   outline: none;
+  box-sizing: border-box;
 
   transition: all var(--transition-fast);
   max-height: 120px;
@@ -776,14 +807,10 @@ body.dark-mode .typing-indicator {
   /* Keep scrollbar minimal on mobile */
   scrollbar-width: thin;
   scrollbar-color: var(--text-tertiary) transparent;
-}
-
-/* Prevent scrollbar/thumb overflow into outside container */
-.input-container {
-  align-items: flex-end;
-}
-
-.user-input {
+  
+  /* Ensure text is vertically centered and visible */
+  display: block;
+  vertical-align: middle;
   overscroll-behavior: contain;
 }
 
@@ -845,17 +872,22 @@ body.dark-mode .user-input {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   padding: 0;
   background-color: var(--primary);
   border: none;
   border-radius: 50%;
+  aspect-ratio: 1 / 1;
   color: white;
   cursor: pointer;
   transition: all var(--transition-fast);
   flex-shrink: 0;
+  flex-grow: 0;
   box-shadow: var(--shadow-md);
+  align-self: center;
 }
 
 .send-btn:hover:not(:disabled) {
@@ -878,16 +910,31 @@ body.dark-mode .user-input {
   height: 20px;
 }
 
+/* Desktop Send Button - Slightly Larger */
+@media (min-width: 768px) {
+  .send-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
 /* Character Count */
 .char-count {
   font-size: 0.75rem;
   color: var(--text-tertiary);
   text-align: right;
   display: none;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .char-count.show {
   display: block;
+  height: auto;
 }
 
 /* ============================================
@@ -971,7 +1018,7 @@ body.dark-mode .user-input {
   }
 
   .input-wrapper {
-    padding: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-sm) max(var(--spacing-sm), env(safe-area-inset-bottom, 0));
   }
 }
 
